@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from util import Time
+from util import *
 
 births_per_person_per_year = 0.01086 + 0.00425 + 0.003  # births + migration + unknown marge
 deaths_per_person_per_year = 0.00986
@@ -66,9 +66,10 @@ class BelgiumPopSimulator:
         plt.xlabel('time in days')
         plt.ylabel('Number of people')
 
-        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
-                   ncol=2, mode="expand", borderaxespad=0.)
-
+        plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
+        plt.subplots_adjust(top=.83)
+        years, days = time.get_years_and_days()
+        plt.savefig("pop"+str(years)+"y"+str(days)+"d"+".png")
         plt.show()
 
     def simulate(self, time):

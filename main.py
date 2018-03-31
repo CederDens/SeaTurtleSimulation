@@ -10,4 +10,4 @@ sim = BelgiumPopSimulator(init_child_count, init_adult_count, init_aged_count)
 
 print "Total initial population:", sim.getPopulationCount()
 
-sim.simulate(Time(years=100))
+sim.simulate(Time(years=5))
