@@ -17,3 +17,13 @@ class Time:
         years = days//365
         remaining_days = days - 365*years
         return years, remaining_days
+
+
+def readHistoricalPopulation(fileName):
+    years = []
+    popSize = []
+    histFile = open(fileName, 'r')
+    for line in histFile:
+        years.append(int(line.split()[0]))
+        popSize.append(int(float(line.split()[1].replace(',', '.'))*1000000))
+    return years, popSize

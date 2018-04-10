@@ -19,6 +19,7 @@ class BelgiumPopSimulator:
         self.aged = []
         self.death = []
         self.totalPop = []
+        self.time = None
 
     def getPopulationCount(self):
         return self._ChildCount + self._AdultCount + self._AgedCount
@@ -77,6 +78,7 @@ class BelgiumPopSimulator:
 
         :type time: Time
         """
+        self.time = time
         for t in range(time.get_in_days()):
             self._ChildCount += (self.births() - self.child2adult())
             self._AdultCount += (self.child2adult() - self.adult2aged())
@@ -93,7 +95,39 @@ class BelgiumPopSimulator:
                 years, days = Time(days=t).get_years_and_days()
                 print "Simulation after %i years and %i days:\n%s" % (years, days, self)
 
-        self.showPlot(time)
+    def plot(self):
+        if self.time is not None:
+            self.showPlot(self.time)
+        else:
+            raise AttributeError('Time not yet instantiated, run the simulation first!')
+
+    def plotHistorical(self):
+        if self.time is None:
+            raise AttributeError('Time not yet instantiated, run the simulation first!')
+
+        days = range(self.time.get_in_days())
+        years, histDays = readHistoricalPopulation("BelgianPopulationHistory.txt")
+        histYears = []
+        for y in years:
+            histYears.append((y-1950)*365)
+
+        plt.plot(days, self.totalPop, label="Total Population")
+        plt.plot(histYears, histDays)
+
+        plt.xlabel('time in days')
+        plt.ylabel('Number of people')
+
+        plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
+        plt.subplots_adjust(top=.83)
+
+        yearsPrint, daysPrint = self.time.get_years_and_days()
+        plt.savefig("pop"+str(yearsPrint)+"y"+str(daysPrint)+"d"+".png")
+
+        x_ticks = [day for day in days if (day % (365*5)) == 0]  # Only pull out full years
+        x_labels = [str((i*5)+1950) for i in range(len(x_ticks))]
+
+        plt.xticks(x_ticks, x_labels)
+        plt.show()
 
     def __str__(self):
         return_string = "Children: " + str(self._ChildCount) + "\n"
