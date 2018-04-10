@@ -2,8 +2,15 @@ import matplotlib.pyplot as plt
 
 from util import *
 
-births_per_person_per_year = 0.01086 + 0.00425 + 0.003  # births + migration + unknown marge
-deaths_per_person_per_year = 0.00986
+
+def birthrate():
+    births_per_person_per_year = 0.01086 + 0.00425 + 0.003  # births + migration + unknown marge
+    return births_per_person_per_year
+
+
+def deathrate():
+    deaths_per_person_per_year = 0.00986
+    return deaths_per_person_per_year
 
 
 class BelgiumPopSimulator:
@@ -43,10 +50,10 @@ class BelgiumPopSimulator:
         return self._AdultCount / float(20*365)
 
     def aged2death(self):
-        return deaths_per_person_per_year*self.getPopulationCount()/365.0
+        return deathrate()*self.getPopulationCount()/365.0
 
     def births(self):
-        return births_per_person_per_year*self.getPopulationCount()/365.0
+        return birthrate()*self.getPopulationCount()/365.0
 
     def showPlot(self, time, labels=None):
         if labels is None:
