@@ -19,6 +19,3 @@ print "Total initial population:", sim.getPopulationCount()
 sim.simulate(Time(years=66))
 sim.plotHistorical()
 
-# years, popSize = readHistoricalPopulation("BelgianPopulationHistory.txt")
-# print years
-# print popSize

@@ -4,14 +4,19 @@ from util import *
 
 
 def birthrate():
-    births_per_person_per_year = 0.01086 + 0.00425 + 0.003  # births + migration + unknown marge
+    births_per_person_per_year = 0.013
     return births_per_person_per_year
 
 
 def deathrate():
-    deaths_per_person_per_year = 0.00986
+    deaths_per_person_per_year = 0.0113
     return deaths_per_person_per_year
 
+def migrationChildRate():
+    return 0.0025 * 0.467
+
+def migrationAdultRate():
+    return 0.0025 * 0.533
 
 class BelgiumPopSimulator:
 
@@ -55,6 +60,12 @@ class BelgiumPopSimulator:
     def births(self):
         return birthrate()*self.getPopulationCount()/365.0
 
+    def migrationChild(self):
+        return migrationChildRate()*self.getPopulationCount()/365.0
+
+    def migrationAdult(self):
+        return migrationChildRate()*self.getPopulationCount()/365.0
+
     def showPlot(self, time, labels=None):
         if labels is None:
             labels = ["children", "adults", "aged", "total"]
@@ -87,8 +98,8 @@ class BelgiumPopSimulator:
         """
         self.time = time
         for t in range(time.get_in_days()):
-            self._ChildCount += (self.births() - self.child2adult())
-            self._AdultCount += (self.child2adult() - self.adult2aged())
+            self._ChildCount += (self.births() + self.migrationChild() - self.child2adult())
+            self._AdultCount += (self.child2adult() + self.migrationAdult() - self.adult2aged())
             self._AgedCount += (self.adult2aged() - self.aged2death())
             self._DeathCount += self.aged2death()
 
@@ -118,8 +129,8 @@ class BelgiumPopSimulator:
         for y in years:
             histYears.append((y-1950)*365)
 
-        plt.plot(days, self.totalPop, label="Total Population")
-        plt.plot(histYears, histDays)
+        plt.plot(days, self.totalPop, label="Simulated Population")
+        plt.plot(histYears, histDays, label="Historical Population")
 
         plt.xlabel('time in days')
         plt.ylabel('Number of people')
@@ -128,12 +139,12 @@ class BelgiumPopSimulator:
         plt.subplots_adjust(top=.83)
 
         yearsPrint, daysPrint = self.time.get_years_and_days()
-        plt.savefig("pop"+str(yearsPrint)+"y"+str(daysPrint)+"d"+".png")
 
-        x_ticks = [day for day in days if (day % (365*5)) == 0]  # Only pull out full years
-        x_labels = [str((i*5)+1950) for i in range(len(x_ticks))]
+        x_ticks = [day for day in days if (day % (365*10)) == 0]  # Only pull out full years
+        x_labels = [str((i*10)+1950) for i in range(len(x_ticks))]
 
         plt.xticks(x_ticks, x_labels)
+        plt.savefig("pop" + str(yearsPrint) + "y" + str(daysPrint) + "d" + ".png")
         plt.show()
 
     def __str__(self):
