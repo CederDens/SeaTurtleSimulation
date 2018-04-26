@@ -16,13 +16,26 @@ class SeaTurtleSimulator:
         self.population = startpopulation
         self.populationHistory = []
 
-    def updatePop(self):
+    def updatePop(self, oldPop):
         self.population.updateTime()
-        self.population.updateEggs(3)
+
+        self.population.updateEggs(oldPop)
+
+        self.population.updateFHatched(oldPop)
+        self.population.updateMHatched(oldPop)
+
+        self.population.updateFInWater(oldPop)
+        self.population.updateMInWater(oldPop)
+
+        self.population.updateFInRif(oldPop)
+        self.population.updateMInRif(oldPop)
+
+        self.population.updateFJuveniel(oldPop)
+        self.population.updateMJuveniel(oldPop)
 
     def simulate(self, days):
         for _ in range(days):
             self.populationHistory.append(deepcopy(self.population))
-            self.updatePop()
+            self.updatePop(self.populationHistory[-1])
             self.date += timedelta(1)
         printList(self.populationHistory)
