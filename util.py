@@ -27,3 +27,8 @@ def readHistoricalPopulation(fileName):
         years.append(int(line.split()[0]))
         popSize.append(int(float(line.split()[1].replace(',', '.'))*1000000))
     return years, popSize
+
+
+def printList(lst):
+    for l in lst:
+        print l
