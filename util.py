@@ -1,5 +1,5 @@
 from datetime import date
-
+from Population import *
 
 class Time:
     def __init__(self, years=0, days=0):
@@ -89,3 +89,29 @@ def getFBreedingDay(d):
 
 def toDays(years=0, days=0):
     return years*365 + days
+
+
+def getPopLists(histPop):
+    """:type p Population"""
+
+    females = []
+    males = []
+    total = []
+    eggs = []
+    for p in histPop:
+        females.append(p.getFemalePopulation())
+        males.append(p.getMalePopulation())
+        total.append(p.getTotalPopulation())
+        eggs.append(p.eggs)
+
+    return {"females": females, "males": males, "total": total, "eggs": eggs}
+
+
+def readTemps():
+    f = open("temperatures.txt", "r")
+    temps = {}
+    year = 1960
+    for line in f:
+        temps[year] = float(line)
+        year += 1
+    return temps

@@ -19,13 +19,17 @@ def hatchRate(temperature):
 
 
 def femaleHatchRate(temperature):
-    denominator = 1 + exp(-1.3*(temperature-29.3))
+    denominator = 1 + exp(-12.5*(temperature-29.197))   # Changed the formula so it fitted the data from the research
     return 1 / float(denominator)
 
 
 def maleHatchRate(temperature):
-    denominator = 1 + exp(-1.3*(temperature-29.3))
+    denominator = 1 + exp(-12.5*(temperature-29.197))   # Changed the formula so it fitted the data from the research
     return 1 - (1 / float(denominator))
+
+
+def mateRate():
+    return 0.0000462                                    # Change this till you get a stable population when fitting
 
 
 class Population:
@@ -68,20 +72,22 @@ class Population:
     def updateEggs(self, oldPop):
         """:type oldPop Population"""
 
-        pass
+        new_eggs = oldPop.f_fertilized * 600 / float(30)    # Divided by 30 because females stay 30 days before they lay eggs
+        to_hatch = oldPop.eggs / float(55)
+        self.eggs += (new_eggs - to_hatch)
 
-    def updateFHatched(self, oldPop):
+    def updateFHatched(self, oldPop, temperature):
         """:type oldPop Population"""
 
-        from_egg = oldPop.eggs * hatchRate(29.8) * femaleHatchRate(29.8) / float(55)    # TODO: Get actual temperatures
+        from_egg = oldPop.eggs * hatchRate(temperature) * femaleHatchRate(temperature) / float(55)
         to_death = oldPop.f_hatched * 0.02
         to_water = oldPop.f_hatched * 0.98
         self.f_hatched += (from_egg - to_death - to_water)
 
-    def updateMHatched(self, oldPop):
+    def updateMHatched(self, oldPop, temperature):
         """:type oldPop Population"""
 
-        from_egg = oldPop.eggs * hatchRate(29.8) * maleHatchRate(29.8) / float(55)      # TODO: Get actual temperatures
+        from_egg = oldPop.eggs * hatchRate(temperature) * maleHatchRate(temperature) / float(55)
         to_death = oldPop.m_hatched * 0.02
         to_water = oldPop.m_hatched * 0.98
         self.m_hatched += (from_egg - to_death - to_water)
@@ -182,23 +188,39 @@ class Population:
     def updateFBreeding(self, oldPop):
         """:type oldPop Population"""
 
-        pass
+        if isFBreedingDate(self.date):
+            from_fertile = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
+        else:
+            from_fertile = 0
+
+        to_fertile = oldPop.f_breeding / float(60)
+        to_fertilized = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()
+        self.f_breeding += (from_fertile - to_fertile - to_fertilized)
 
     def updateMBreeding(self, oldPop):
         """:type oldPop Population"""
 
-        pass
+        if isMBreedingDate(self.date):
+            from_adult = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
+        else:
+            from_adult = 0
+
+        to_adult = oldPop.m_breeding / float(30)
+        self.m_breeding += (from_adult - to_adult)
 
     def updateFFertilized(self, oldPop):
         """:type oldPop Population"""
 
-        pass
+        from_breeding = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()
+        to_fertile = oldPop.f_fertilized / float(30)
+
+        self.f_fertilized += (from_breeding - to_fertile)
 
     def __repr__(self):
         ret = Color.BOLD + "Population on: %s\n" % self.date + Color.END
-        ret += "  ---> Male population: %i\n" % self.getMalePopulation()
-        ret += "  ---> Female population: %i\n" % self.getFemalePopulation()
-        ret += "  ---> Total population: %i\n" % self.getTotalPopulation()
-        ret += "  ---> Number of eggs: %i\n" % self.eggs
+        ret += "  ---> Male population: %f\n" % self.getMalePopulation()
+        ret += "  ---> Female population: %f\n" % self.getFemalePopulation()
+        ret += "  ---> Total population: %f\n" % self.getTotalPopulation()
+        ret += "  ---> Number of eggs: %f\n" % self.eggs
         ret += "\n"
         return ret

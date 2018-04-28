@@ -1,6 +1,7 @@
 from Population import *
 from copy import deepcopy
 from util import *
+import matplotlib.pyplot as plt
 
 
 class SeaTurtleSimulator:
@@ -15,14 +16,15 @@ class SeaTurtleSimulator:
         self.date = self.startdate
         self.population = startpopulation
         self.populationHistory = []
+        self.time = None
 
-    def updatePop(self, oldPop):
+    def updatePop(self, oldPop, temperature):
         self.population.updateTime()
 
         self.population.updateEggs(oldPop)
 
-        self.population.updateFHatched(oldPop)
-        self.population.updateMHatched(oldPop)
+        self.population.updateFHatched(oldPop, temperature)
+        self.population.updateMHatched(oldPop, temperature)
 
         self.population.updateFInWater(oldPop)
         self.population.updateMInWater(oldPop)
@@ -43,16 +45,55 @@ class SeaTurtleSimulator:
         self.population.updateFBreeding(oldPop)
         self.population.updateMBreeding(oldPop)
 
-
-    def simulate(self, time):
+    def simulate(self, t, temperature):
         """:type time timedelta"""
 
-        for i in range(time.days):
+        self.time = t
+        for i in range(t.days):
             self.populationHistory.append(deepcopy(self.population))
-            self.updatePop(self.populationHistory[-1])
+            self.updatePop(self.populationHistory[-1], temperature)
             self.date += timedelta(1)
 
-            if ((i + 1) % (365 * 10)) == 0:
+            if t.days > (50 * 365) and ((i + 1) % (365 * 10)) == 0:
                 print("Simulated %i years!" % ((i + 1) / 365))
 
-        printList(self.populationHistory)
+        #printList(self.populationHistory)
+
+    def plot(self):
+        if len(self.populationHistory) == 0:
+            raise AttributeError('Run the simulation first!')
+
+        days = range(self.time.days)
+
+        popLists = getPopLists(self.populationHistory)
+
+        l1 = plt.plot(days, popLists["total"], label="Total Population")
+        l2 = plt.plot(days, popLists["females"], label="Female Population")
+        l3 = plt.plot(days, popLists["males"], label="Male Population")
+        l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
+
+        lw = 0.8
+
+        plt.setp(l1, linewidth=lw)
+        plt.setp(l2, linewidth=lw)
+        plt.setp(l3, linewidth=lw)
+        plt.setp(l4, linewidth=lw)
+
+
+        plt.xlabel('year')
+        plt.ylabel('Number of turtles')
+
+        plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
+        plt.subplots_adjust(top=.83)
+
+        x_distance = self.time.days / 10
+
+        days.append(days[-1] + 1)
+
+        x_ticks = [day for day in days if (day % x_distance) == 0]
+        x_labels = [str(i*x_distance/365 + self.startdate.year) for i in range(len(x_ticks)+1)]
+
+        plt.xticks(x_ticks, x_labels)
+        plt.savefig("pop" + str(self.time.days/365) + "y" + str(self.time.days % 365) + "d" + ".png", dpi=600)
+        #plt.show()
+
