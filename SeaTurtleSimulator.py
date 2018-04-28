@@ -27,15 +27,32 @@ class SeaTurtleSimulator:
         self.population.updateFInWater(oldPop)
         self.population.updateMInWater(oldPop)
 
-        self.population.updateFInRif(oldPop)
-        self.population.updateMInRif(oldPop)
-
         self.population.updateFJuveniel(oldPop)
         self.population.updateMJuveniel(oldPop)
 
-    def simulate(self, days):
-        for _ in range(days):
+        self.population.updateFSubAdult(oldPop)
+        self.population.updateMSubAdult(oldPop)
+
+        self.population.updateMAdult(oldPop)
+
+        self.population.updateFNotFertile(oldPop)
+        self.population.updateFFertile(oldPop)
+        self.population.updateFAged(oldPop)
+        self.population.updateFFertilized(oldPop)
+
+        self.population.updateFBreeding(oldPop)
+        self.population.updateMBreeding(oldPop)
+
+
+    def simulate(self, time):
+        """:type time timedelta"""
+
+        for i in range(time.days):
             self.populationHistory.append(deepcopy(self.population))
             self.updatePop(self.populationHistory[-1])
             self.date += timedelta(1)
+
+            if ((i + 1) % (365 * 10)) == 0:
+                print("Simulated %i years!" % ((i + 1) / 365))
+
         printList(self.populationHistory)

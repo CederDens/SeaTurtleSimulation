@@ -1,5 +1,5 @@
 from SeaTurtleSimulator import *
-from datetime import date
+from util import *
 
 startpopcount = 40000
 
@@ -18,4 +18,7 @@ startpopulation = Population(init_m_juveniel, init_m_subadult, init_m_adult, ini
                              init_f_not_fertile, init_f_fertile, init_f_aged, startdate)
 
 sim = SeaTurtleSimulator(startdate, startpopulation)
-sim.simulate(20)
+sim.simulate(timedelta(toDays(years=20)))
+
+print(femaleHatchRate(30.3))
+print(maleHatchRate(30.3))

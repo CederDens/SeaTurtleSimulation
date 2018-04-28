@@ -1,3 +1,5 @@
+from datetime import date
+
 
 class Time:
     def __init__(self, years=0, days=0):
@@ -45,3 +47,45 @@ def readHistoricalPopulation(fileName):
 def printList(lst):
     for l in lst:
         print l
+
+
+def isMBreedingDate(d):
+    """:type d date"""
+
+    if 3 <= d.month <= 9:
+        return False
+    return True
+
+
+def isFBreedingDate(d):
+    """:type d date"""
+
+    if 2 <= d.month <= 9:
+        return False
+    return True
+
+
+def getMBreedingDay(d):
+    """:type d date"""
+
+    if d.month >= 10:   # october, november or december
+        return (d - date(d.year, 10, 1)).days
+    elif d.month <= 2:  # january or february
+        return (d - date(d.year - 1, 10, 1)).days
+    else:
+        raise RuntimeError("Getting breeding days of date out of male breeding season!")
+
+
+def getFBreedingDay(d):
+    """:type d date"""
+
+    if d.month >= 10:   # october, november or december
+        return (d - date(d.year, 10, 1)).days
+    elif d.month == 1:  # january
+        return (d - date(d.year - 1, 10, 1)).days
+    else:
+        raise RuntimeError("Getting breeding days of date out of female breeding season!")
+
+
+def toDays(years=0, days=0):
+    return years*365 + days
