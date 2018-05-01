@@ -19,12 +19,12 @@ def hatchRate(temperature):
 
 
 def femaleHatchRate(temperature):
-    denominator = 1 + exp(-12.5*(temperature-29.197))   # Changed the formula so it fitted the data from the research
+    denominator = 1 + exp(-12.585*(temperature-29.198))   # Changed the formula so it fitted the data from the research
     return 1 / float(denominator)
 
 
 def maleHatchRate(temperature):
-    denominator = 1 + exp(-12.5*(temperature-29.197))   # Changed the formula so it fitted the data from the research
+    denominator = 1 + exp(-12.585*(temperature-29.198))   # Changed the formula so it fitted the data from the research
     return 1 - (1 / float(denominator))
 
 
@@ -194,7 +194,7 @@ class Population:
             from_fertile = 0
 
         to_fertile = oldPop.f_breeding / float(60)
-        to_fertilized = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()
+        to_fertilized = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()    # used square root for a stable population
         self.f_breeding += (from_fertile - to_fertile - to_fertilized)
 
     def updateMBreeding(self, oldPop):
@@ -211,7 +211,7 @@ class Population:
     def updateFFertilized(self, oldPop):
         """:type oldPop Population"""
 
-        from_breeding = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()
+        from_breeding = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()    # used square root for a stable population
         to_fertile = oldPop.f_fertilized / float(30)
 
         self.f_fertilized += (from_breeding - to_fertile)

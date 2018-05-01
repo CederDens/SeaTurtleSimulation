@@ -58,6 +58,7 @@ class SeaTurtleSimulator:
                 print("Simulated %i years!" % ((i + 1) / 365))
 
         #printList(self.populationHistory)
+        print self.population
 
     def plot(self):
         if len(self.populationHistory) == 0:
@@ -72,7 +73,7 @@ class SeaTurtleSimulator:
         l3 = plt.plot(days, popLists["males"], label="Male Population")
         l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
 
-        lw = 0.8
+        lw = 0.7
 
         plt.setp(l1, linewidth=lw)
         plt.setp(l2, linewidth=lw)
@@ -94,6 +95,6 @@ class SeaTurtleSimulator:
         x_labels = [str(i*x_distance/365 + self.startdate.year) for i in range(len(x_ticks)+1)]
 
         plt.xticks(x_ticks, x_labels)
-        plt.savefig("pop" + str(self.time.days/365) + "y" + str(self.time.days % 365) + "d" + ".png", dpi=600)
+        plt.savefig("pop" + str(self.time.days/365) + "y" + str(self.time.days % 365) + "d" + ".png", dpi=900)
         #plt.show()
 
