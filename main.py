@@ -1,7 +1,7 @@
 from SeaTurtleSimulator import *
 from util import *
 
-startpopcount = 40000
+startpopcount = 25000000
 
 maleRate = 1 / 7.66
 femaleRate = 6.66 / 7.66
@@ -21,7 +21,7 @@ startpopulation = Population(init_m_juveniel, init_m_subadult, init_m_adult, ini
                              init_f_not_fertile, init_f_fertile, init_f_aged, startdate)
 
 sim = SeaTurtleSimulator(startdate, startpopulation)
-sim.simulate(timedelta(toDays(years=300)), 29.348)
+sim.simulate(timedelta(toDays(years=20)), 29.348)
 sim.plot()
 
 # print femaleHatchRate(29.3 + 0.4)

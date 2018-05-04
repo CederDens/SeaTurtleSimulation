@@ -16,12 +16,14 @@ class SeaTurtleSimulator:
         self.date = self.startdate
         self.population = startpopulation
         self.populationHistory = []
+        self.egg_history = []
         self.time = None
 
     def updatePop(self, oldPop, temperature):
         self.population.updateTime()
 
-        self.population.updateEggs(oldPop)
+        new_eggs = self.population.updateEggs(oldPop)
+        self.egg_history.append(new_eggs)
 
         self.population.updateFHatched(oldPop, temperature)
         self.population.updateMHatched(oldPop, temperature)
@@ -71,14 +73,20 @@ class SeaTurtleSimulator:
         l1 = plt.plot(days, popLists["total"], label="Total Population")
         l2 = plt.plot(days, popLists["females"], label="Female Population")
         l3 = plt.plot(days, popLists["males"], label="Male Population")
-        l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
+        # l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
+        # l5 = plt.plot(days, popLists["fertilized_females"], label="Fertilized females")
+        # l6 = plt.plot(days, popLists["breeding_females"], label="Breeding females")
+        # l7 = plt.plot(days, self.egg_history, label="new eggs")
 
         lw = 0.7
 
         plt.setp(l1, linewidth=lw)
         plt.setp(l2, linewidth=lw)
         plt.setp(l3, linewidth=lw)
-        plt.setp(l4, linewidth=lw)
+        # plt.setp(l4, linewidth=lw)
+        # plt.setp(l5, linewidth=lw)
+        # plt.setp(l6, linewidth=lw)
+        # plt.setp(l7, linewidth=lw)
 
 
         plt.xlabel('year')
@@ -96,5 +104,5 @@ class SeaTurtleSimulator:
 
         plt.xticks(x_ticks, x_labels)
         plt.savefig("pop" + str(self.time.days/365) + "y" + str(self.time.days % 365) + "d" + ".png", dpi=900)
-        #plt.show()
+        # plt.show()
 

@@ -75,6 +75,7 @@ class Population:
         new_eggs = oldPop.f_fertilized * 600 / float(30)    # Divided by 30 because females stay 30 days before they lay eggs
         to_hatch = oldPop.eggs / float(55)
         self.eggs += (new_eggs - to_hatch)
+        return new_eggs
 
     def updateFHatched(self, oldPop, temperature):
         """:type oldPop Population"""

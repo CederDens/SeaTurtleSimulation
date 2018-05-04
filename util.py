@@ -98,13 +98,17 @@ def getPopLists(histPop):
     males = []
     total = []
     eggs = []
+    fertile_females = []
+    breeding_females = []
     for p in histPop:
         females.append(p.getFemalePopulation())
         males.append(p.getMalePopulation())
         total.append(p.getTotalPopulation())
         eggs.append(p.eggs)
+        fertile_females.append(p.f_fertilized*6)
+        breeding_females.append(p.f_breeding)
 
-    return {"females": females, "males": males, "total": total, "eggs": eggs}
+    return {"females": females, "males": males, "total": total, "eggs": eggs, "fertilized_females": fertile_females, "breeding_females": breeding_females}
 
 
 def readTemps():
