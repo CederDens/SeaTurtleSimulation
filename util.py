@@ -1,5 +1,6 @@
 from datetime import date
 from Population import *
+import matplotlib.pyplot as plt
 
 class Time:
     def __init__(self, years=0, days=0):
@@ -119,3 +120,29 @@ def readTemps():
         temps[year] = float(line)
         year += 1
     return temps
+
+
+def getTestRange(start, step):
+    ret = []
+    for i in range(11):
+        ret.append(start + i*step)
+    return ret
+
+
+def readStablePops():
+    f = open("stablePops.txt", "r")
+    pops = []
+    lams = []
+    eggs = []
+    for line in f:
+        if not line.startswith("//") and not line.startswith("populationsize"):
+            spl = line.split(', ')
+            pops.append(int(spl[0]))
+            lams.append(float(spl[1]))
+            eggs.append(int(spl[2][:-1]))
+
+    l1 = plt.plot(pops, eggs)
+
+    plt.xlabel('Population')
+    plt.ylabel('Lambda')
+    plt.savefig("stablePops.png")

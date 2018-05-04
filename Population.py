@@ -27,11 +27,6 @@ def maleHatchRate(temperature):
     denominator = 1 + exp(-12.585*(temperature-29.198))   # Changed the formula so it fitted the data from the research
     return 1 - (1 / float(denominator))
 
-
-def mateRate():
-    return 0.0000462                                    # Change this till you get a stable population when fitting
-
-
 class Population:
     def __init__(self, init_m_juveniel, init_m_subadult, init_m_adult, init_f_juveniel, init_f_subadult,
                  init_f_not_fertile, init_f_fertile, init_f_aged, init_date):
@@ -72,7 +67,7 @@ class Population:
     def updateEggs(self, oldPop):
         """:type oldPop Population"""
 
-        new_eggs = oldPop.f_fertilized * 600 / float(30)    # Divided by 30 because females stay 30 days before they lay eggs
+        new_eggs = oldPop.f_fertilized * 600 / float(90)    # Divided by 90 because females stay 30 days before they lay eggs
         to_hatch = oldPop.eggs / float(55)
         self.eggs += (new_eggs - to_hatch)
         return new_eggs
@@ -145,13 +140,14 @@ class Population:
         """:type oldPop Population"""
 
         from_sub_adult = (oldPop.m_subadult * 0.8474) / float(7 * 365)
-        from_breeding = oldPop.m_breeding / float(30)     # TODO: check if this is a problem, maybe return all turtles on the last breeding day?
         to_death = oldPop.m_adult / float(58.5 * 365)
 
         if isMBreedingDate(self.date):
             to_breeding = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
+            from_breeding = oldPop.m_breeding / float(30)
         else:
             to_breeding = 0
+            from_breeding = oldPop.m_breeding
 
         self.m_adult += (from_sub_adult + from_breeding - to_death - to_breeding)
 
@@ -167,15 +163,15 @@ class Population:
         """:type oldPop Population"""
 
         from_not_fertile = oldPop.f_not_fertile / float(8.5 * 365)
-        from_breeding = oldPop.f_breeding / float(60)
-        from_fertilized = oldPop.f_fertilized / float(30)
-
+        from_fertilized = oldPop.f_fertilized / float(90)
         to_aged = oldPop.f_fertile / float(20 * 365)
 
         if isFBreedingDate(self.date):
             to_breeding = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
+            from_breeding = oldPop.f_breeding / float(60)
         else:
             to_breeding = 0
+            from_breeding = oldPop.f_breeding
 
         self.f_fertile += (from_not_fertile + from_breeding + from_fertilized - to_aged - to_breeding)
 
@@ -186,16 +182,17 @@ class Population:
         to_death = oldPop.f_aged / float(30 * 365)
         self.f_aged += (from_fertile - to_death)
 
-    def updateFBreeding(self, oldPop):
+    def updateFBreeding(self, oldPop, lam):
         """:type oldPop Population"""
 
         if isFBreedingDate(self.date):
             from_fertile = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
+            to_fertile = oldPop.f_breeding / float(60)
         else:
             from_fertile = 0
+            to_fertile = oldPop.f_breeding
 
-        to_fertile = oldPop.f_breeding / float(60)
-        to_fertilized = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()    # used square root for a stable population
+        to_fertilized = oldPop.f_breeding * oldPop.m_breeding * lam    # used square root for a stable population
         self.f_breeding += (from_fertile - to_fertile - to_fertilized)
 
     def updateMBreeding(self, oldPop):
@@ -203,17 +200,19 @@ class Population:
 
         if isMBreedingDate(self.date):
             from_adult = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
+            to_adult = oldPop.m_breeding / float(30)
         else:
             from_adult = 0
+            to_adult = oldPop.m_breeding
 
-        to_adult = oldPop.m_breeding / float(30)
+
         self.m_breeding += (from_adult - to_adult)
 
-    def updateFFertilized(self, oldPop):
+    def updateFFertilized(self, oldPop, lam):
         """:type oldPop Population"""
 
-        from_breeding = sqrt(oldPop.f_breeding * oldPop.m_breeding) * mateRate()    # used square root for a stable population
-        to_fertile = oldPop.f_fertilized / float(30)
+        from_breeding = oldPop.f_breeding * oldPop.m_breeding * lam    # used square root for a stable population
+        to_fertile = oldPop.f_fertilized / float(90)
 
         self.f_fertilized += (from_breeding - to_fertile)
 

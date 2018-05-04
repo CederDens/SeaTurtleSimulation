@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 class SeaTurtleSimulator:
-    def __init__(self, startdate, startpopulation):
+    def __init__(self, startdate, startpopulation, lam):
         """
         :type startdate date
         :type startpopulation Population
@@ -18,6 +18,7 @@ class SeaTurtleSimulator:
         self.populationHistory = []
         self.egg_history = []
         self.time = None
+        self.lam = lam
 
     def updatePop(self, oldPop, temperature):
         self.population.updateTime()
@@ -42,9 +43,9 @@ class SeaTurtleSimulator:
         self.population.updateFNotFertile(oldPop)
         self.population.updateFFertile(oldPop)
         self.population.updateFAged(oldPop)
-        self.population.updateFFertilized(oldPop)
+        self.population.updateFFertilized(oldPop, self.lam)
 
-        self.population.updateFBreeding(oldPop)
+        self.population.updateFBreeding(oldPop, self.lam)
         self.population.updateMBreeding(oldPop)
 
     def simulate(self, t, temperature):
@@ -59,35 +60,44 @@ class SeaTurtleSimulator:
             if t.days > (50 * 365) and ((i + 1) % (365 * 10)) == 0:
                 print("Simulated %i years!" % ((i + 1) / 365))
 
-        #printList(self.populationHistory)
+        # printList(self.populationHistory)
         print self.population
 
-    def plot(self):
+    def plot(self, new_eggs=False):
         if len(self.populationHistory) == 0:
             raise AttributeError('Run the simulation first!')
 
         days = range(self.time.days)
-
         popLists = getPopLists(self.populationHistory)
+        lw = 0.7
 
-        l1 = plt.plot(days, popLists["total"], label="Total Population")
-        l2 = plt.plot(days, popLists["females"], label="Female Population")
-        l3 = plt.plot(days, popLists["males"], label="Male Population")
+        if not new_eggs:
+            l1 = plt.plot(days, popLists["total"], label="Total Population")
+            l2 = plt.plot(days, popLists["females"], label="Female Population")
+            l3 = plt.plot(days, popLists["males"], label="Male Population")
+
+            plt.setp(l1, linewidth=lw)
+            plt.setp(l2, linewidth=lw)
+            plt.setp(l3, linewidth=lw)
+
+            filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/pop" + str(
+                self.time.days / 365) + "y" + str(
+                self.time.days % 365) + "d" + str(self.lam) + ".png"
+
+        else:
+            print max(self.egg_history[-365:])
+            l7 = plt.plot(days, self.egg_history, label="new eggs")
+            plt.setp(l7, linewidth=lw)
+            filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/newEggs" + str(
+                self.time.days / 365) + "y" + str(
+                self.time.days % 365) + "d" + str(self.lam) + ".png"
+
         # l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
         # l5 = plt.plot(days, popLists["fertilized_females"], label="Fertilized females")
         # l6 = plt.plot(days, popLists["breeding_females"], label="Breeding females")
-        # l7 = plt.plot(days, self.egg_history, label="new eggs")
-
-        lw = 0.7
-
-        plt.setp(l1, linewidth=lw)
-        plt.setp(l2, linewidth=lw)
-        plt.setp(l3, linewidth=lw)
         # plt.setp(l4, linewidth=lw)
         # plt.setp(l5, linewidth=lw)
         # plt.setp(l6, linewidth=lw)
-        # plt.setp(l7, linewidth=lw)
-
 
         plt.xlabel('year')
         plt.ylabel('Number of turtles')
@@ -100,9 +110,10 @@ class SeaTurtleSimulator:
         days.append(days[-1] + 1)
 
         x_ticks = [day for day in days if (day % x_distance) == 0]
-        x_labels = [str(i*x_distance/365 + self.startdate.year) for i in range(len(x_ticks)+1)]
+        x_labels = [str(i * x_distance / 365 + self.startdate.year) for i in range(len(x_ticks) + 1)]
 
         plt.xticks(x_ticks, x_labels)
-        plt.savefig("pop" + str(self.time.days/365) + "y" + str(self.time.days % 365) + "d" + ".png", dpi=900)
-        # plt.show()
 
+        plt.savefig(filename, dpi=900)
+        # plt.show()
+        plt.close()
