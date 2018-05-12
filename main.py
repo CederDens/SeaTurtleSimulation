@@ -26,15 +26,15 @@ init_f_aged = femaleRate * startpopcount * (30.0 / 80)
 #     sim.simulate(timedelta(toDays(years=1000)), 29.348)
 #     sim.plot()
 
-
-
 startdate = date(1700, 4, 1)
 startpopulation = Population(init_m_juveniel, init_m_subadult, init_m_adult, init_f_juveniel, init_f_subadult,
                              init_f_not_fertile, init_f_fertile, init_f_aged, startdate)
 
-sim = SeaTurtleSimulator(startdate, startpopulation, 3.1459/pow(10, 11))
-sim.simulate(timedelta(toDays(years=1000)), 29.348)
+sim = SeaTurtleSimulator(startdate, startpopulation, 2.75/pow(10, 12))
+sim.simulate(timedelta(toDays(years=100)), 29.348)
 sim.plot()
+sim.plot(True)
+sim.plotCompartments()
 
 
 # startdate = date(1700, 4, 1)

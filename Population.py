@@ -4,8 +4,8 @@ from math import *
 
 
 def male2BreedingRate(day):
-    e = exp(-0.5*pow(((day - 75) / float(22)), 2))
-    return e / (22. * sqrt(2. * pi))
+    e = exp(-0.5*pow(((day - 46) / float(15)), 2))
+    return e / (15. * sqrt(2. * pi))
 
 
 def female2BreedingRate(day):
@@ -142,13 +142,16 @@ class Population:
         from_sub_adult = (oldPop.m_subadult * 0.8474) / float(7 * 365)
         to_death = oldPop.m_adult / float(58.5 * 365)
 
-        if isMBreedingDate(self.date):
+        if isMDepartingDate(self.date):
             to_breeding = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
-            from_breeding = oldPop.m_breeding / float(30)
         else:
             to_breeding = 0
+        if isMLeavingDate(self.date):
+            from_breeding = oldPop.m_breeding / float(90)
+        elif not isMDepartingDate(self.date):
             from_breeding = oldPop.m_breeding
-
+        else:
+            from_breeding = 0
         self.m_adult += (from_sub_adult + from_breeding - to_death - to_breeding)
 
     def updateFNotFertile(self, oldPop):
@@ -166,12 +169,15 @@ class Population:
         from_fertilized = oldPop.f_fertilized / float(90)
         to_aged = oldPop.f_fertile / float(20 * 365)
 
-        if isFBreedingDate(self.date):
+        if isFDepartingDate(self.date):
             to_breeding = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
-            from_breeding = oldPop.f_breeding / float(90)
         else:
             to_breeding = 0
+        if isFLeavingDate(self.date):
             from_breeding = oldPop.f_breeding
+        else:
+            from_breeding = 0
+            # from_breeding = oldPop.f_breeding / float(90)         females only go back on last day of the season
 
         self.f_fertile += (from_not_fertile + from_breeding + from_fertilized - to_aged - to_breeding)
 
@@ -187,12 +193,15 @@ class Population:
             :type lam float
         """
 
-        if isFBreedingDate(self.date):
+        if isFDepartingDate(self.date):
             from_fertile = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
-            to_fertile = oldPop.f_breeding / float(90)
         else:
             from_fertile = 0
+        if isFLeavingDate(self.date):
             to_fertile = oldPop.f_breeding
+        else:
+            # to_fertile = oldPop.f_breeding / float(90)            females only go back on last day of the season
+            to_fertile = 0
 
         to_fertilized = oldPop.f_breeding * oldPop.m_breeding * lam
         self.f_breeding += (from_fertile - to_fertile - to_fertilized)
@@ -202,12 +211,16 @@ class Population:
             :type lam float
         """
 
-        if isMBreedingDate(self.date):
+        if isMDepartingDate(self.date):
             from_adult = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
-            to_adult = oldPop.m_breeding / float(30)
         else:
             from_adult = 0
+        if isMLeavingDate(self.date):
+            to_adult = oldPop.m_breeding / float(90)
+        elif not isMDepartingDate(self.date):
             to_adult = oldPop.m_breeding
+        else:
+            to_adult = 0
 
         self.m_breeding += (from_adult - to_adult)
 

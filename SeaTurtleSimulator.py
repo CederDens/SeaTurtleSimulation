@@ -92,13 +92,6 @@ class SeaTurtleSimulator:
                 self.time.days / 365) + "y" + str(
                 self.time.days % 365) + "d" + str(self.lam) + ".png"
 
-        # l4 = plt.plot(days, popLists["eggs"], label="Number of eggs")
-        # l5 = plt.plot(days, popLists["fertilized_females"], label="Fertilized females")
-        # l6 = plt.plot(days, popLists["breeding_females"], label="Breeding females")
-        # plt.setp(l4, linewidth=lw)
-        # plt.setp(l5, linewidth=lw)
-        # plt.setp(l6, linewidth=lw)
-
         plt.xlabel('year')
         plt.ylabel('Number of turtles')
 
@@ -116,4 +109,38 @@ class SeaTurtleSimulator:
 
         plt.savefig(filename, dpi=900)
         # plt.show()
+        plt.close()
+
+    def plotCompartments(self):
+        if len(self.populationHistory) < 60:
+            raise AttributeError('Run the simulation for at least 60 years first!')
+
+        days = range(370)
+        popLists = getPopLists(self.populationHistory)
+        lw = 1
+
+        plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_fertilized"][(50*365)+12:(51*365)+17], label="Fertilized females"), linewidth=lw)
+
+        filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/categorical" + str(self.lam) + ".png"
+
+        plt.xlabel('year')
+        plt.ylabel('Number of turtles')
+
+        plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
+        plt.subplots_adjust(top=.83)
+
+        day_lengths = [0, 30, 31, 30, 31, 31, 30, 31, 30, 31, 31, 28, 31]
+        x_ticks = [0]
+        for x in day_lengths[1:]:
+            x_ticks.append(x_ticks[-1] + x)
+        print x_ticks
+        x_labels = ["apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec", "jan", "feb", "mar", "apr"]
+
+        plt.xticks(x_ticks, x_labels)
+
+        plt.savefig(filename, dpi=900)
         plt.close()

@@ -2,6 +2,7 @@ from datetime import date
 from Population import *
 import matplotlib.pyplot as plt
 
+
 class Time:
     def __init__(self, years=0, days=0):
         """
@@ -13,12 +14,12 @@ class Time:
         self._days = days
 
     def get_in_days(self):
-        return self._years*365 + self._days
+        return self._years * 365 + self._days
 
     def get_years_and_days(self):
         days = self.get_in_days()
-        years = days//365
-        remaining_days = days - 365*years
+        years = days // 365
+        remaining_days = days - 365 * years
         return years, remaining_days
 
 
@@ -41,7 +42,7 @@ def readHistoricalPopulation(fileName):
     histFile = open(fileName, 'r')
     for line in histFile:
         years.append(int(line.split()[0]))
-        popSize.append(int(float(line.split()[1].replace(',', '.'))*1000000))
+        popSize.append(int(float(line.split()[1].replace(',', '.')) * 1000000))
     return years, popSize
 
 
@@ -50,15 +51,7 @@ def printList(lst):
         print l
 
 
-def isMBreedingDate(d):
-    """:type d date"""
-
-    if 3 <= d.month <= 9:
-        return False
-    return True
-
-
-def isFBreedingDate(d):
+def isMDepartingDate(d):
     """:type d date"""
 
     if 1 <= d.month <= 9:
@@ -66,10 +59,34 @@ def isFBreedingDate(d):
     return True
 
 
+def isFDepartingDate(d):
+    """:type d date"""
+
+    if 1 <= d.month <= 9:
+        return False
+    return True
+
+
+def isMLeavingDate(d):
+    """:type d date"""
+
+    if 1 <= d.month <= 3:
+        return True
+    return False
+
+
+def isFLeavingDate(d):
+    """:type d date"""
+
+    if 4 <= d.month <= 9:
+        return True
+    return False
+
+
 def getMBreedingDay(d):
     """:type d date"""
 
-    if d.month >= 10:   # october, november or december
+    if d.month >= 10:  # october, november or december
         return (d - date(d.year, 10, 1)).days
     elif d.month <= 2:  # january or february
         return (d - date(d.year - 1, 10, 1)).days
@@ -80,34 +97,47 @@ def getMBreedingDay(d):
 def getFBreedingDay(d):
     """:type d date"""
 
-    if d.month >= 10:   # october, november or december
+    if d.month >= 10:  # october, november or december
         return (d - date(d.year, 10, 1)).days
     else:
         raise RuntimeError("Getting breeding days of date out of female breeding season!")
 
 
 def toDays(years=0, days=0):
-    return years*365 + days
+    return years * 365 + days
 
 
 def getPopLists(histPop):
-    """:type p Population"""
+    """
 
-    females = []
-    males = []
-    total = []
-    eggs = []
-    fertile_females = []
-    breeding_females = []
+    :type histPop: list[Population]
+    """
+    retDic = {}
+    for k in ["females", "males", "total", "eggs", "m_hatched", "m_in_water", "m_juveniel", "m_subadult", "m_adult",
+              "m_breeding", "f_hatched", "f_in_water", "f_juveniel", "f_subadult", "f_not_fertile", "f_fertile",
+              "f_breeding", "f_fertilized", "f_aged"]:
+        retDic[k] = []
     for p in histPop:
-        females.append(p.getFemalePopulation())
-        males.append(p.getMalePopulation())
-        total.append(p.getTotalPopulation())
-        eggs.append(p.eggs)
-        fertile_females.append(p.f_fertilized*6)
-        breeding_females.append(p.f_breeding)
-
-    return {"females": females, "males": males, "total": total, "eggs": eggs, "fertilized_females": fertile_females, "breeding_females": breeding_females}
+        retDic["females"].append(p.getFemalePopulation())
+        retDic["males"].append(p.getMalePopulation())
+        retDic["total"].append(p.getTotalPopulation())
+        retDic["eggs"].append(p.eggs)
+        retDic["m_hatched"].append(p.m_hatched)
+        retDic["m_in_water"].append(p.m_in_water)
+        retDic["m_juveniel"].append(p.m_juveniel)
+        retDic["m_subadult"].append(p.m_subadult)
+        retDic["m_adult"].append(p.m_adult)
+        retDic["m_breeding"].append(p.m_breeding)
+        retDic["f_hatched"].append(p.f_hatched)
+        retDic["f_in_water"].append(p.f_in_water)
+        retDic["f_juveniel"].append(p.f_juveniel)
+        retDic["f_subadult"].append(p.f_subadult)
+        retDic["f_not_fertile"].append(p.f_not_fertile)
+        retDic["f_fertile"].append(p.f_fertile)
+        retDic["f_breeding"].append(p.f_breeding)
+        retDic["f_fertilized"].append(p.f_fertilized)
+        retDic["f_aged"].append(p.f_aged)
+    return retDic
 
 
 def readTemps():
@@ -123,7 +153,7 @@ def readTemps():
 def getTestRange(start, step):
     ret = []
     for i in range(11):
-        ret.append(start + i*step)
+        ret.append(start + i * step)
     return ret
 
 
