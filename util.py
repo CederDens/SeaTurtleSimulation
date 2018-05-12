@@ -61,7 +61,7 @@ def isMBreedingDate(d):
 def isFBreedingDate(d):
     """:type d date"""
 
-    if 2 <= d.month <= 9:
+    if 1 <= d.month <= 9:
         return False
     return True
 
@@ -82,8 +82,6 @@ def getFBreedingDay(d):
 
     if d.month >= 10:   # october, november or december
         return (d - date(d.year, 10, 1)).days
-    elif d.month == 1:  # january
-        return (d - date(d.year - 1, 10, 1)).days
     else:
         raise RuntimeError("Getting breeding days of date out of female breeding season!")
 

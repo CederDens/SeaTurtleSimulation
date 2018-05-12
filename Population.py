@@ -9,13 +9,13 @@ def male2BreedingRate(day):
 
 
 def female2BreedingRate(day):
-    e = exp(-0.5 * pow(((day - 61) / float(18)), 2))
-    return e / (18. * sqrt(2. * pi))
+    e = exp(-0.5 * pow(((day - 46) / float(15)), 2))
+    return e / (15. * sqrt(2. * pi))
 
 
 def hatchRate(temperature):
     denominator = 1 + exp(1.2 * (temperature - 32.6))
-    return 0.89 / denominator
+    return 0.89 / float(denominator)
 
 
 def femaleHatchRate(temperature):
@@ -67,7 +67,7 @@ class Population:
     def updateEggs(self, oldPop):
         """:type oldPop Population"""
 
-        new_eggs = oldPop.f_fertilized * 600 / float(90)    # Divided by 90 because females stay 30 days before they lay eggs
+        new_eggs = oldPop.f_fertilized * 600 / float(90)
         to_hatch = oldPop.eggs / float(55)
         self.eggs += (new_eggs - to_hatch)
         return new_eggs
@@ -168,7 +168,7 @@ class Population:
 
         if isFBreedingDate(self.date):
             to_breeding = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
-            from_breeding = oldPop.f_breeding / float(60)
+            from_breeding = oldPop.f_breeding / float(90)
         else:
             to_breeding = 0
             from_breeding = oldPop.f_breeding
@@ -183,20 +183,24 @@ class Population:
         self.f_aged += (from_fertile - to_death)
 
     def updateFBreeding(self, oldPop, lam):
-        """:type oldPop Population"""
+        """ :type oldPop Population
+            :type lam float
+        """
 
         if isFBreedingDate(self.date):
             from_fertile = oldPop.f_fertile * female2BreedingRate(getFBreedingDay(self.date)) / float(5)
-            to_fertile = oldPop.f_breeding / float(60)
+            to_fertile = oldPop.f_breeding / float(90)
         else:
             from_fertile = 0
             to_fertile = oldPop.f_breeding
 
-        to_fertilized = oldPop.f_breeding * oldPop.m_breeding * lam    # used square root for a stable population
+        to_fertilized = oldPop.f_breeding * oldPop.m_breeding * lam
         self.f_breeding += (from_fertile - to_fertile - to_fertilized)
 
     def updateMBreeding(self, oldPop):
-        """:type oldPop Population"""
+        """ :type oldPop Population
+            :type lam float
+        """
 
         if isMBreedingDate(self.date):
             from_adult = oldPop.m_adult * male2BreedingRate(getMBreedingDay(self.date)) / float(2)
@@ -205,13 +209,12 @@ class Population:
             from_adult = 0
             to_adult = oldPop.m_breeding
 
-
         self.m_breeding += (from_adult - to_adult)
 
     def updateFFertilized(self, oldPop, lam):
         """:type oldPop Population"""
 
-        from_breeding = oldPop.f_breeding * oldPop.m_breeding * lam    # used square root for a stable population
+        from_breeding = oldPop.f_breeding * oldPop.m_breeding * lam
         to_fertile = oldPop.f_fertilized / float(90)
 
         self.f_fertilized += (from_breeding - to_fertile)
