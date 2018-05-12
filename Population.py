@@ -76,70 +76,70 @@ class Population:
         """:type oldPop Population"""
 
         from_egg = oldPop.eggs * hatchRate(temperature) * femaleHatchRate(temperature) / float(55)
-        to_death = oldPop.f_hatched * 0.02
-        to_water = oldPop.f_hatched * 0.98
+        to_death = oldPop.f_hatched * 0.5
+        to_water = oldPop.f_hatched * 0.5
         self.f_hatched += (from_egg - to_death - to_water)
 
     def updateMHatched(self, oldPop, temperature):
         """:type oldPop Population"""
 
         from_egg = oldPop.eggs * hatchRate(temperature) * maleHatchRate(temperature) / float(55)
-        to_death = oldPop.m_hatched * 0.02
-        to_water = oldPop.m_hatched * 0.98
+        to_death = oldPop.m_hatched * 0.5
+        to_water = oldPop.m_hatched * 0.5
         self.m_hatched += (from_egg - to_death - to_water)
 
     def updateFInWater(self, oldPop):
         """:type oldPop Population"""
 
-        from_hatched = oldPop.f_hatched * 0.98
-        to_death = oldPop.f_in_water * 0.6 / float(5)
-        to_juv = oldPop.f_in_water * 0.4 / float(5)
+        from_hatched = oldPop.f_hatched * 0.5
+        to_death = oldPop.f_in_water * 0.5 / float(5)
+        to_juv = oldPop.f_in_water * 0.5 / float(5)
         self.f_in_water += (from_hatched - to_death - to_juv)
 
     def updateMInWater(self, oldPop):
         """:type oldPop Population"""
 
-        from_hatched = oldPop.m_hatched * 0.98
-        to_death = oldPop.m_in_water * 0.6 / float(5)
-        to_juv = oldPop.m_in_water * 0.4 / float(5)
+        from_hatched = oldPop.m_hatched * 0.5
+        to_death = oldPop.m_in_water * 0.5 / float(5)
+        to_juv = oldPop.m_in_water * 0.5 / float(5)
         self.m_in_water += (from_hatched - to_death - to_juv)
 
     def updateFJuveniel(self, oldPop):
         """:type oldPop Population"""
 
-        from_water = oldPop.f_in_water * 0.4 / float(5)
-        to_death = (oldPop.f_juveniel * 0.1196) / float(14.5 * 365)
-        to_subadult = (oldPop.f_juveniel * 0.8804) / float(14.5 * 365)
+        from_water = oldPop.f_in_water * 0.5 / float(5)
+        to_death = (oldPop.f_juveniel * 0.684) / float(14.5 * 365)
+        to_subadult = (oldPop.f_juveniel * 0.316) / float(14.5 * 365)
         self.f_juveniel += (from_water - to_death - to_subadult)
 
     def updateMJuveniel(self, oldPop):
         """:type oldPop Population"""
 
-        from_water = oldPop.m_in_water * 0.4 / float(5)
-        to_death = (oldPop.m_juveniel * 0.1196) / float(14.5 * 365)
-        to_subadult = (oldPop.m_juveniel * 0.8804) / float(14.5 * 365)
+        from_water = oldPop.m_in_water * 0.5 / float(5)
+        to_death = (oldPop.m_juveniel * 0.684) / float(14.5 * 365)
+        to_subadult = (oldPop.m_juveniel * 0.316) / float(14.5 * 365)
         self.m_juveniel += (from_water - to_death - to_subadult)
 
     def updateFSubAdult(self, oldPop):
         """:type oldPop Population"""
 
-        from_juv = oldPop.f_juveniel * 0.8804 / float(14.5 * 365)
-        to_death = (oldPop.f_subadult * 0.1526) / float(7 * 365)
-        to_not_fertile = (oldPop.f_subadult * 0.8474) / float(7 * 365)
+        from_juv = oldPop.f_juveniel * 0.316 / float(14.5 * 365)
+        to_death = (oldPop.f_subadult * 0.684) / float(7 * 365)
+        to_not_fertile = (oldPop.f_subadult * 0.316) / float(7 * 365)
         self.f_subadult += (from_juv - to_death - to_not_fertile)
 
     def updateMSubAdult(self, oldPop):
         """:type oldPop Population"""
 
-        from_juv = oldPop.m_juveniel * 0.8804 / float(14.5 * 365)
-        to_death = (oldPop.m_subadult * 0.1526) / float(7 * 365)
-        to_adult = (oldPop.m_subadult * 0.8474) / float(7 * 365)
+        from_juv = oldPop.m_juveniel * 0.316 / float(14.5 * 365)
+        to_death = (oldPop.m_subadult * 0.9684) / float(7 * 365)
+        to_adult = (oldPop.m_subadult * 0.0316) / float(7 * 365)
         self.m_subadult += (from_juv - to_death - to_adult)
 
     def updateMAdult(self, oldPop):
         """:type oldPop Population"""
 
-        from_sub_adult = (oldPop.m_subadult * 0.8474) / float(7 * 365)
+        from_sub_adult = (oldPop.m_subadult * 0.0316) / float(7 * 365)
         to_death = oldPop.m_adult / float(58.5 * 365)
 
         if isMDepartingDate(self.date):
@@ -157,15 +157,16 @@ class Population:
     def updateFNotFertile(self, oldPop):
         """:type oldPop Population"""
 
-        from_sub_adult = (oldPop.f_subadult * 0.8474) / float(7 * 365)
-        to_fertile = oldPop.f_not_fertile / float(8.5 * 365)
+        from_sub_adult = (oldPop.f_subadult * 0.316) / float(7 * 365)
+        to_fertile = oldPop.f_not_fertile * 0.1 / float(8.5 * 365)
+        to_death = oldPop.f_not_fertile * 0.9 / float(8.5 * 365)
 
-        self.f_not_fertile += (from_sub_adult - to_fertile)
+        self.f_not_fertile += (from_sub_adult - to_fertile - to_death)
 
     def updateFFertile(self, oldPop):
         """:type oldPop Population"""
 
-        from_not_fertile = oldPop.f_not_fertile / float(8.5 * 365)
+        from_not_fertile = oldPop.f_not_fertile * 0.1/ float(8.5 * 365)
         from_fertilized = oldPop.f_fertilized / float(90)
         to_aged = oldPop.f_fertile / float(20 * 365)
 

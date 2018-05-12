@@ -119,10 +119,10 @@ class SeaTurtleSimulator:
         popLists = getPopLists(self.populationHistory)
         lw = 1
 
-        plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
+        # plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
+        # plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
+        # plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
+        # plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
         plt.setp(plt.plot(days, popLists["f_fertilized"][(50*365)+12:(51*365)+17], label="Fertilized females"), linewidth=lw)
 
         filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/categorical" + str(self.lam) + ".png"
