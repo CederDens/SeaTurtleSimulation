@@ -72,18 +72,30 @@ class Population:
         self.eggs += (new_eggs - to_hatch)
         return new_eggs
 
-    def updateFHatched(self, oldPop, temperature):
-        """:type oldPop Population"""
+    def updateFHatched(self, oldPop, temperature, isTsunamiYear):
+        """ :type isTsunamiYear bool
+            :type temperature float
+            :type oldPop Population
+        """
 
-        from_egg = oldPop.eggs * hatchRate(temperature) * femaleHatchRate(temperature) / float(55)
+        if isTsunamiYear:
+            from_egg = oldPop.eggs * hatchRate(temperature) * femaleHatchRate(temperature) * 0.4 / float(55)
+        else:
+            from_egg = oldPop.eggs * hatchRate(temperature) * femaleHatchRate(temperature) / float(55)
         to_death = oldPop.f_hatched * 0.5
         to_water = oldPop.f_hatched * 0.5
         self.f_hatched += (from_egg - to_death - to_water)
 
-    def updateMHatched(self, oldPop, temperature):
-        """:type oldPop Population"""
+    def updateMHatched(self, oldPop, temperature, isTsunamiYear):
+        """ :type isTsunamiYear bool
+            :type temperature float
+            :type oldPop Population
+        """
 
-        from_egg = oldPop.eggs * hatchRate(temperature) * maleHatchRate(temperature) / float(55)
+        if isTsunamiYear:
+            from_egg = oldPop.eggs * hatchRate(temperature) * maleHatchRate(temperature) * 0.4 / float(55)
+        else:
+            from_egg = oldPop.eggs * hatchRate(temperature) * maleHatchRate(temperature) / float(55)
         to_death = oldPop.m_hatched * 0.5
         to_water = oldPop.m_hatched * 0.5
         self.m_hatched += (from_egg - to_death - to_water)

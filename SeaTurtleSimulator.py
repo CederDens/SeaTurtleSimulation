@@ -2,7 +2,7 @@ from Population import *
 from copy import deepcopy
 from util import *
 import matplotlib.pyplot as plt
-
+from random import *
 
 class SeaTurtleSimulator:
     def __init__(self, startdate, startpopulation, lam):
@@ -19,6 +19,20 @@ class SeaTurtleSimulator:
         self.egg_history = []
         self.time = None
         self.lam = lam
+        self.tsunamiyears = []
+
+    def getTsunamiYears(self):
+        seed(3)
+        for i in range(self.time.days/365):
+            if random() < 0.1:
+                self.tsunamiyears.append(i + self.startdate.year)
+
+    def tsunamiIsComing(self):
+        if self.date.month >= 10 and self.date.year in self.tsunamiyears:
+            return True
+        elif self.date.month < 10 and self.date.year-1 in self.tsunamiyears:
+            return True
+        return False
 
     def updatePop(self, oldPop, temperature):
         self.population.updateTime()
@@ -26,8 +40,8 @@ class SeaTurtleSimulator:
         new_eggs = self.population.updateEggs(oldPop)
         self.egg_history.append(new_eggs)
 
-        self.population.updateFHatched(oldPop, temperature)
-        self.population.updateMHatched(oldPop, temperature)
+        self.population.updateFHatched(oldPop, temperature, self.tsunamiIsComing())
+        self.population.updateMHatched(oldPop, temperature, self.tsunamiIsComing())
 
         self.population.updateFInWater(oldPop)
         self.population.updateMInWater(oldPop)
@@ -49,9 +63,10 @@ class SeaTurtleSimulator:
         self.population.updateMBreeding(oldPop)
 
     def simulate(self, t, temperature):
-        """:type time timedelta"""
+        """:type t timedelta"""
 
         self.time = t
+        self.getTsunamiYears()
         for i in range(t.days):
             self.populationHistory.append(deepcopy(self.population))
             self.updatePop(self.populationHistory[-1], temperature)
@@ -119,10 +134,10 @@ class SeaTurtleSimulator:
         popLists = getPopLists(self.populationHistory)
         lw = 1
 
-        # plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
-        # plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
-        # plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
-        # plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
+        #plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
+        #plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
         plt.setp(plt.plot(days, popLists["f_fertilized"][(50*365)+12:(51*365)+17], label="Fertilized females"), linewidth=lw)
 
         filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/categorical" + str(self.lam) + ".png"
@@ -137,7 +152,6 @@ class SeaTurtleSimulator:
         x_ticks = [0]
         for x in day_lengths[1:]:
             x_ticks.append(x_ticks[-1] + x)
-        print x_ticks
         x_labels = ["apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec", "jan", "feb", "mar", "apr"]
 
         plt.xticks(x_ticks, x_labels)
