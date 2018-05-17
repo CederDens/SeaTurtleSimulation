@@ -34,6 +34,52 @@ class SeaTurtleSimulator:
             return True
         return False
 
+    def temperature(self, scenario, year=0):
+        if year == 0:
+            year = self.date.year
+        if year <= 2000:
+            return 29.348
+
+        elif year <= 2055:
+            if scenario == 1:
+                return 0.018181818 * year - 7.015636364
+            elif scenario == 2:
+                return 0.025454545 * year - 21.561090909
+            elif scenario == 3:
+                return 0.023636364 * year - 17.924727273
+            elif scenario == 4:
+                return 0.036363636 * year - 43.379272727
+            elif scenario == 5:
+                return 29.348
+            else:
+                raise Exception(msg="Wrong scenario!")
+        elif year <= 2090:
+            if scenario == 1:
+                return 30.348
+            elif scenario == 2:
+                return 0.011428571 * year + 7.262285714
+            elif scenario == 3:
+                return 0.025714286 * year - 22.194857143
+            elif scenario == 4:
+                return 0.048571429 * year - 68.466285714
+            elif scenario == 5:
+                return 29.348
+            else:
+                raise Exception(msg="Wrong scenario!")
+        else:
+            if scenario == 1:
+                return 30.348
+            elif scenario == 2:
+                return 31.148
+            elif scenario == 3:
+                return 31.548
+            elif scenario == 4:
+                return 33.048
+            elif scenario == 5:
+                return 29.348
+            else:
+                raise Exception(msg="Wrong scenario!")
+
     def updatePop(self, oldPop, temperature):
         self.population.updateTime()
 
@@ -62,14 +108,14 @@ class SeaTurtleSimulator:
         self.population.updateFBreeding(oldPop, self.lam)
         self.population.updateMBreeding(oldPop)
 
-    def simulate(self, t, temperature):
+    def simulate(self, t, scenario):
         """:type t timedelta"""
 
         self.time = t
         self.getTsunamiYears()
         for i in range(t.days):
             self.populationHistory.append(deepcopy(self.population))
-            self.updatePop(self.populationHistory[-1], temperature)
+            self.updatePop(self.populationHistory[-1], self.temperature(scenario))
             self.date += timedelta(1)
 
             if t.days > (50 * 365) and ((i + 1) % (365 * 10)) == 0:
@@ -78,7 +124,7 @@ class SeaTurtleSimulator:
         # printList(self.populationHistory)
         print self.population
 
-    def plot(self, new_eggs=False):
+    def plot(self, scenario, new_eggs=False):
         if len(self.populationHistory) == 0:
             raise AttributeError('Run the simulation first!')
 
@@ -95,7 +141,7 @@ class SeaTurtleSimulator:
             plt.setp(l2, linewidth=lw)
             plt.setp(l3, linewidth=lw)
 
-            filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/pop" + str(
+            filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/pop_scenario"+ str(scenario) + "_" + str(
                 self.time.days / 365) + "y" + str(
                 self.time.days % 365) + "d" + str(self.lam) + ".png"
 
@@ -158,3 +204,26 @@ class SeaTurtleSimulator:
 
         plt.savefig(filename, dpi=900)
         plt.close()
+
+    def plotTemperature(self):
+
+        years = range(1900, 2150)
+        temps1 = [self.temperature(1, y) for y in years]
+        temps2 = [self.temperature(2, y) for y in years]
+        temps3 = [self.temperature(3, y) for y in years]
+        temps4 = [self.temperature(4, y) for y in years]
+
+        print(temps1)
+
+        plt.plot(years, temps1, label="Scenario 1")
+        plt.plot(years, temps2, label="Scenario 2")
+        plt.plot(years, temps3, label="Scenario 3")
+        plt.plot(years, temps4, label="Scenario 4")
+
+        plt.xlabel('Year')
+        plt.ylabel('Temperature')
+
+        plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
+        plt.subplots_adjust(top=.83)
+
+        plt.show()
