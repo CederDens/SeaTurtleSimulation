@@ -16,17 +16,6 @@ init_f_not_fertile = femaleRate * startpopcount * (100. * 8.5) / 18062.
 init_f_fertile = femaleRate * startpopcount * (10. * 20.0) / 18062.
 init_f_aged = femaleRate * startpopcount * (10. * 30.0) / 18062.
 
-
-# for lam in getTestRange(3.14597/pow(10, 11), 1/pow(10, 17)):
-#     startdate = date(1700, 4, 1)
-#     startpopulation = Population(init_m_juveniel, init_m_subadult, init_m_adult, init_f_juveniel, init_f_subadult,
-#                                  init_f_not_fertile, init_f_fertile, init_f_aged, startdate)
-#
-#     sim = SeaTurtleSimulator(startdate, startpopulation, lam)
-#     sim.simulate(timedelta(toDays(years=1000)), 29.348)
-#     sim.plot()
-
-
 # for scenario in range(1, 6):
 scenario = 5
 startdate = date(1900, 4, 1)
@@ -38,16 +27,6 @@ sim.simulate(timedelta(toDays(years=250)), scenario)
 sim.plot(scenario)
 sim.plot(scenario, True)
 sim.plotCompartments()
-
-
-# startdate = date(1700, 4, 1)
-# startpopulation = Population(init_m_juveniel, init_m_subadult, init_m_adult, init_f_juveniel, init_f_subadult,
-#                              init_f_not_fertile, init_f_fertile, init_f_aged, startdate)
-#
-# sim = SeaTurtleSimulator(startdate, startpopulation, 3.145972*pow(10, -11))
-# sim.simulate(timedelta(toDays(years=100)), 29.348)
-# sim.plot()
-# sim.plot(True)
 
 # readStablePops()
 

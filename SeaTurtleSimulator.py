@@ -147,6 +147,7 @@ class SeaTurtleSimulator:
 
         else:
             print max(self.egg_history[-365:])
+            print sum(self.egg_history) / float(self.time.days)
             l7 = plt.plot(days, self.egg_history, label="new eggs")
             plt.setp(l7, linewidth=lw)
             filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/newEggs" + str(
@@ -181,15 +182,15 @@ class SeaTurtleSimulator:
         lw = 1
 
         #plt.setp(plt.plot(days, popLists["m_adult"][(50*365)+12:(51*365)+17], label="Adult males (not breeding)"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Breeding males"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["m_breeding"][(50*365)+12:(51*365)+17], label="Broedende mannetjes"), linewidth=lw)
         #plt.setp(plt.plot(days, popLists["f_fertile"][(50*365)+12:(51*365)+17], label="Fertile females"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Breeding females"), linewidth=lw)
-        plt.setp(plt.plot(days, popLists["f_fertilized"][(50*365)+12:(51*365)+17], label="Fertilized females"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_breeding"][(50*365)+12:(51*365)+17], label="Broedende vrouwtjes"), linewidth=lw)
+        plt.setp(plt.plot(days, popLists["f_fertilized"][(50*365)+12:(51*365)+17], label="Bevruchte vrouwtjes"), linewidth=lw)
 
         filename = "pop" + str(int(self.populationHistory[0].getTotalPopulation())) + "/categorical" + str(self.lam) + ".png"
 
-        plt.xlabel('year')
-        plt.ylabel('Number of turtles')
+        plt.xlabel('Maand')
+        plt.ylabel('Aantal schildpadden')
 
         plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
         plt.subplots_adjust(top=.83)
@@ -213,12 +214,10 @@ class SeaTurtleSimulator:
         temps3 = [self.temperature(3, y) for y in years]
         temps4 = [self.temperature(4, y) for y in years]
 
-        print(temps1)
-
-        plt.plot(years, temps1, label="Scenario 1")
-        plt.plot(years, temps2, label="Scenario 2")
-        plt.plot(years, temps3, label="Scenario 3")
-        plt.plot(years, temps4, label="Scenario 4")
+        plt.plot(years, temps1, label="Scenario RCP2.6")
+        plt.plot(years, temps2, label="Scenario RCP4.5")
+        plt.plot(years, temps3, label="Scenario RCP6.0")
+        plt.plot(years, temps4, label="Scenario RCP8.5")
 
         plt.xlabel('Year')
         plt.ylabel('Temperature')
@@ -226,4 +225,4 @@ class SeaTurtleSimulator:
         plt.legend(bbox_to_anchor=(0.5, 1.2), loc=9, ncol=2)
         plt.subplots_adjust(top=.83)
 
-        plt.show()
+        plt.savefig("TemperatuurStijgingen.png", dpi=900)
